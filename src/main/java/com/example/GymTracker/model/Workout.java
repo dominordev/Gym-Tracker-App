@@ -1,5 +1,7 @@
 package com.example.GymTracker.model;
 
+import java.util.UUID;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,27 +14,25 @@ public class Workout {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
-
     private String exercise;
-
     private int sets;
-
     private int reps;
-
     private double weight;
-
+    private UUID userId;
 
     public Workout() {
-
+        
     }
 
 
-    public Workout(String exercise, int sets, int reps, double weight) {
+    public Workout(String exercise, int sets, int reps, double weight, UUID userId) {
         this.exercise = exercise;
         this.sets = sets;
         this.reps = reps;
         this.weight = weight;
+        this.userId = userId;
     }
 
 
@@ -78,5 +78,13 @@ public class Workout {
 
     public void setWeight(double weight) {
         this.weight = weight;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 }

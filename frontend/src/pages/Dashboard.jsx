@@ -100,7 +100,7 @@ export default function Dashboard({ session }) {
 
       <header className="header">
         <div>
-          <h1>💪 Gym Tracker</h1>
+          <h1>Gym Tracker</h1>
           <p>{session.user.email}</p>
         </div>
 
