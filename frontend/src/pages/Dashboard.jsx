@@ -13,7 +13,7 @@ export default function Dashboard({ session }) {
 
   async function getWorkouts() {
     try {
-      const response = await fetch("http://localhost:8080/workouts");
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/workouts`); 
       const data = await response.json();
       setWorkouts(data);
     } catch (error) {
