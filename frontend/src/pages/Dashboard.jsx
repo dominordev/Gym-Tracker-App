@@ -48,7 +48,7 @@ export default function Dashboard({ session }) {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/workouts", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/workouts`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -80,10 +80,10 @@ export default function Dashboard({ session }) {
   }
 
   async function deleteWorkout(id) {
-    try {
-      await fetch(`http://localhost:8080/workouts/${id}`, {
-        method: "DELETE",
-      });
+  try {
+    await fetch(`${import.meta.env.VITE_API_URL}/workouts/${id}`, {
+      method: "DELETE",
+    });
 
       getWorkouts();
     } catch (error) {
