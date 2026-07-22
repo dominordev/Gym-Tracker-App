@@ -1,192 +1,131 @@
-import { useEffect, useState } from "react";
+import { useWorkouts } from "../hooks/useWorkouts";
+
+import WorkoutForm from "../components/WorkoutForm";
+import WorkoutList from "../components/WorkoutList";
+
 import { supabase } from "../utils/supabase";
 
+
 export default function Dashboard({ session }) {
-  const [workouts, setWorkouts] = useState([]);
 
-  const [newWorkout, setNewWorkout] = useState({
-    exercise: "",
-    sets: "",
-    reps: "",
-    weight: "",
-  });
+    const {
+        workouts,
+        loading,
+        addWorkout,
+        removeWorkout
+    } = useWorkouts(session);
 
-  async function getWorkouts() {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/workouts`); 
-      const data = await response.json();
-      setWorkouts(data);
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
-  useEffect(() => {
-    getWorkouts();
-  }, []);
+    async function logout() {
 
-  function handleChange(e) {
-    const { name, value } = e.target;
+        await supabase.auth.signOut();
 
-    setNewWorkout({
-      ...newWorkout,
-      [name]: value,
-    });
-  }
-
-  async function createWorkout(e) {
-    e.preventDefault();
-
-    if (
-      !newWorkout.exercise ||
-      !newWorkout.sets ||
-      !newWorkout.reps ||
-      !newWorkout.weight
-    ) {
-      alert("Completa todos los campos.");
-      return;
     }
 
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/workouts`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            exercise: newWorkout.exercise,
-            sets: Number(newWorkout.sets),
-            reps: Number(newWorkout.reps),
-            weight: Number(newWorkout.weight),
-            userId: session.user.id
-        }),
-      });
 
-      if (!response.ok) {
-        throw new Error("Error creando workout");
-      }
+    return (
 
-      setNewWorkout({
-        exercise: "",
-        sets: "",
-        reps: "",
-        weight: "",
-      });
+        <main className="
+            min-h-screen
+            bg-zinc-950
+            text-white
+            p-6
+        ">
 
-      getWorkouts();
-    } catch (error) {
-      console.error(error);
-    }
-  }
+            <div className="
+                max-w-5xl
+                mx-auto
+                space-y-8
+            ">
 
-  async function deleteWorkout(id) {
-  try {
-    await fetch(`${import.meta.env.VITE_API_URL}/workouts/${id}`, {
-      method: "DELETE",
-    });
 
-      getWorkouts();
-    } catch (error) {
-      console.error(error);
-    }
-  }
+                {/* Header */}
 
-  async function logout() {
-    await supabase.auth.signOut();
-  }
+                <header className="
+                    flex
+                    flex-col
+                    md:flex-row
+                    md:items-center
+                    md:justify-between
+                    gap-4
+                ">
 
-  return (
-    <div className="container">
+                    <div>
 
-      <header className="header">
-        <div>
-          <h1>Gym Tracker</h1>
-          <p>{session.user.email}</p>
-        </div>
+                        <h1 className="
+                            text-4xl
+                            font-bold
+                            tracking-tight
+                        ">
+                            Gym Tracker
+                        </h1>
 
-        <button onClick={logout}>
-          Cerrar sesión
-        </button>
-      </header>
 
-      <section className="card">
+                        <p className="
+                            text-zinc-400
+                            mt-2
+                        ">
+                            {session?.user?.email}
+                        </p>
 
-        <h2>➕ Nuevo entrenamiento</h2>
+                    </div>
 
-        <form onSubmit={createWorkout}>
 
-          <input
-            name="exercise"
-            placeholder="Ejercicio"
-            value={newWorkout.exercise}
-            onChange={handleChange}
-          />
+                    <button
+                        onClick={logout}
+                        className="
+                            bg-zinc-800
+                            hover:bg-zinc-700
+                            transition
+                            px-4
+                            py-2
+                            rounded-lg
+                        "
+                    >
+                        Cerrar sesión
+                    </button>
 
-          <input
-            name="sets"
-            type="number"
-            placeholder="Series"
-            value={newWorkout.sets}
-            onChange={handleChange}
-          />
 
-          <input
-            name="reps"
-            type="number"
-            placeholder="Repeticiones"
-            value={newWorkout.reps}
-            onChange={handleChange}
-          />
+                </header>
 
-          <input
-            name="weight"
-            type="number"
-            placeholder="Peso (kg)"
-            value={newWorkout.weight}
-            onChange={handleChange}
-          />
 
-          <button type="submit">
-            Guardar entrenamiento
-          </button>
 
-        </form>
+                {/* Crear workout */}
 
-      </section>
+                <WorkoutForm
+                    onSubmit={addWorkout}
+                    loading={loading}
+                />
 
-      <section>
 
-        <h2>📋 Historial</h2>
 
-        {workouts.length === 0 ? (
-          <p>No hay entrenamientos registrados.</p>
-        ) : (
-          workouts.map((workout) => (
-            <div className="workout-card" key={workout.id}>
+                {/* Lista */}
 
-              <div>
+                <section className="
+                    space-y-4
+                ">
 
-                <h3>{workout.exercise}</h3>
+                    <h2 className="
+                        text-2xl
+                        font-semibold
+                    ">
+                        Historial de entrenamientos
+                    </h2>
 
-                <p>
-                  {workout.sets} series • {workout.reps} reps •{" "}
-                  {workout.weight} kg
-                </p>
 
-              </div>
+                    <WorkoutList
+                        workouts={workouts}
+                        onDelete={removeWorkout}
+                    />
 
-              <button
-                onClick={() => deleteWorkout(workout.id)}
-              >
-                🗑️
-              </button>
+                </section>
+
 
             </div>
-          ))
-        )}
 
-      </section>
 
-    </div>
-  );
+        </main>
+
+    );
+
 }

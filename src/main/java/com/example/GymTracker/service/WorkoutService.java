@@ -27,27 +27,41 @@ public class WorkoutService {
         return repository.findByUserId(userId);
     }
 
-    public WorkoutResponse createWorkout(WorkoutRequest request) {
+    public WorkoutResponse createWorkout(
+        WorkoutRequest request,
+        UUID userId
+) {
 
-        Workout workout = new Workout();
 
-        workout.setExercise(request.getExercise());
-        workout.setSets(request.getSets());
-        workout.setReps(request.getReps());
-        workout.setWeight(request.getWeight());
+    Workout workout = new Workout();
 
-        Workout savedWorkout = repository.save(workout);
+    workout.setExercise(request.getExercise());
+    workout.setSets(request.getSets());
+    workout.setReps(request.getReps());
+    workout.setWeight(request.getWeight());
+    workout.setUserId(userId);
 
-        return new WorkoutResponse(
-                savedWorkout.getId(),
-                savedWorkout.getExercise(),
-                savedWorkout.getSets(),
-                savedWorkout.getReps(),
-                savedWorkout.getWeight()
-        );
+
+    Workout saved = repository.save(workout);
+
+
+    return new WorkoutResponse(
+            saved.getId(),
+            saved.getExercise(),
+            saved.getSets(),
+            saved.getReps(),
+            saved.getWeight()
+    );
     }
+    
+    public void delete(Long id, UUID userId) {
 
-    public void delete(Long id) {
-        repository.deleteById(id);
+            Workout workout = repository
+                    .findByIdAndUserId(id, userId)
+                    .orElseThrow(() ->
+                        new RuntimeException("Workout not found.")
+                    );
+
+            repository.delete(workout);
     }
 }
