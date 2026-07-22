@@ -1,46 +1,53 @@
 package com.example.GymTracker.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.example.GymTracker.dto.WorkoutRequest;
+import com.example.GymTracker.dto.WorkoutResponse;
 import com.example.GymTracker.model.Workout;
 import com.example.GymTracker.repository.WorkoutRepository;
-
 
 @Service
 public class WorkoutService {
 
-
     private final WorkoutRepository repository;
 
-
-    public WorkoutService(WorkoutRepository repository){
+    public WorkoutService(WorkoutRepository repository) {
         this.repository = repository;
     }
 
-
-
-    public List<Workout> getAll(){
-
+    public List<Workout> getAll() {
         return repository.findAll();
-
     }
 
-
-
-    public Workout save(Workout workout){
-
-        return repository.save(workout);
-
+    public List<Workout> findByUserId(UUID userId) {
+        return repository.findByUserId(userId);
     }
 
+    public WorkoutResponse createWorkout(WorkoutRequest request) {
 
+        Workout workout = new Workout();
 
-    public void delete(Long id){
+        workout.setExercise(request.getExercise());
+        workout.setSets(request.getSets());
+        workout.setReps(request.getReps());
+        workout.setWeight(request.getWeight());
 
+        Workout savedWorkout = repository.save(workout);
+
+        return new WorkoutResponse(
+                savedWorkout.getId(),
+                savedWorkout.getExercise(),
+                savedWorkout.getSets(),
+                savedWorkout.getReps(),
+                savedWorkout.getWeight()
+        );
+    }
+
+    public void delete(Long id) {
         repository.deleteById(id);
-
     }
-
 }
