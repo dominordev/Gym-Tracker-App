@@ -1,132 +1,194 @@
+// import { useEffect, useState } from "react";
+
+// import {
+//     getWorkouts,
+//     createWorkout,
+//     deleteWorkout
+// } from "../api/workoutApi";
+
+
+// export function useWorkouts(session) {
+
+//     const [workouts, setWorkouts] = useState([]);
+
+//     const [loading, setLoading] = useState(false);
+
+
+
+//     async function loadWorkouts() {
+
+//         try {
+
+//             setLoading(true);
+
+//             const data = await getWorkouts(session);
+
+//             setWorkouts(data);
+
+//         } catch(error) {
+
+//             console.error(error);
+
+//         } finally {
+
+//             setLoading(false);
+
+//         }
+
+//     }
+
+
+
+//     async function addWorkout(workoutData) {
+
+//         try {
+
+//             setLoading(true);
+
+
+//             const created = await createWorkout(
+//                 session,
+//                 workoutData
+//             );
+
+
+//             setWorkouts(prev => [
+//                 ...prev,
+//                 created
+//             ]);
+
+
+//         } catch(error) {
+
+//             console.error(error);
+
+//         } finally {
+
+//             setLoading(false);
+
+//         }
+
+//     }
+
+
+
+
+//     async function removeWorkout(id) {
+
+//         try {
+
+//             setLoading(true);
+
+
+//             await deleteWorkout(
+//                 session,
+//                 id
+//             );
+
+
+//             setWorkouts(prev =>
+//                 prev.filter(
+//                     workout => workout.id !== id
+//                 )
+//             );
+
+
+//         } catch(error) {
+
+//             console.error(error);
+
+//         } finally {
+
+//             setLoading(false);
+
+//         }
+
+//     }
+
+
+
+//     useEffect(() => {
+
+//         if(session) {
+//             loadWorkouts();
+//         }
+
+//     }, [session]);
+
+
+
+//     return {
+
+//         workouts,
+
+//         loading,
+
+//         addWorkout,
+
+//         removeWorkout
+
+//     };
+
+// }
+
+// src/hooks/useWorkouts.js
 import { useEffect, useState } from "react";
-
 import {
-    getWorkouts,
-    createWorkout,
-    deleteWorkout
-} from "../api/workoutApi";
-
+  getWorkouts,
+  createWorkout,
+  deleteWorkout
+} from "../Api/workoutApi";
 
 export function useWorkouts(session) {
+  const [workouts, setWorkouts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-    const [workouts, setWorkouts] = useState([]);
-
-    const [loading, setLoading] = useState(false);
-
-
-
-    async function loadWorkouts() {
-
-        try {
-
-            setLoading(true);
-
-            const data = await getWorkouts(session);
-
-            setWorkouts(data);
-
-        } catch(error) {
-
-            console.error(error);
-
-        } finally {
-
-            setLoading(false);
-
-        }
-
+  async function loadWorkouts() {
+    try {
+      setLoading(true);
+      const data = await getWorkouts(session);
+      setWorkouts(data);
+    } catch (error) {
+      console.error("loadWorkouts error:", error);
+    } finally {
+      setLoading(false);
     }
+  }
 
-
-
-    async function addWorkout(workoutData) {
-
-        try {
-
-            setLoading(true);
-
-
-            const created = await createWorkout(
-                session,
-                workoutData
-            );
-
-
-            setWorkouts(prev => [
-                ...prev,
-                created
-            ]);
-
-
-        } catch(error) {
-
-            console.error(error);
-
-        } finally {
-
-            setLoading(false);
-
-        }
-
+  async function addWorkout(workoutData) {
+    try {
+      setLoading(true);
+      const created = await createWorkout(session, workoutData);
+      setWorkouts(prev => [...prev, created]);
+    } catch (error) {
+      console.error("addWorkout error:", error);
+    } finally {
+      setLoading(false);
     }
+  }
 
-
-
-
-    async function removeWorkout(id) {
-
-        try {
-
-            setLoading(true);
-
-
-            await deleteWorkout(
-                session,
-                id
-            );
-
-
-            setWorkouts(prev =>
-                prev.filter(
-                    workout => workout.id !== id
-                )
-            );
-
-
-        } catch(error) {
-
-            console.error(error);
-
-        } finally {
-
-            setLoading(false);
-
-        }
-
+  async function removeWorkout(id) {
+    try {
+      setLoading(true);
+      await deleteWorkout(session, id);
+      setWorkouts(prev => prev.filter(workout => workout.id !== id));
+    } catch (error) {
+      console.error("removeWorkout error:", error);
+    } finally {
+      setLoading(false);
     }
+  }
 
+  useEffect(() => {
+    if (session) {
+      loadWorkouts();
+    }
+  }, [session]);
 
-
-    useEffect(() => {
-
-        if(session) {
-            loadWorkouts();
-        }
-
-    }, [session]);
-
-
-
-    return {
-
-        workouts,
-
-        loading,
-
-        addWorkout,
-
-        removeWorkout
-
-    };
-
+  return {
+    workouts,
+    loading,
+    addWorkout,
+    removeWorkout
+  };
 }

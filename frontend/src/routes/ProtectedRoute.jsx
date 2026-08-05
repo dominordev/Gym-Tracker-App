@@ -17,8 +17,8 @@ export default function ProtectedRoute({
         );
 
     }
-
-
+    console.log(window.location.pathname);
+    console.log("ProtectedRoute session:", session);
     return children;
 
 }
