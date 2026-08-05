@@ -1,14 +1,20 @@
 import { useState } from "react";
 import { supabase } from "../utils/supabase";
+import "./Login.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const [success, setSuccess] = useState("");
 
   async function handleRegister(e) {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -21,11 +27,11 @@ export default function Register() {
     setLoading(false);
 
     if (error) {
-      alert(error.message);
+      setError(error.message);
       return;
     }
 
-    alert("¡Cuenta creada correctamente! Ya puedes iniciar sesión.");
+    setSuccess("¡Cuenta creada correctamente!");
 
     setEmail("");
     setPassword("");
@@ -33,31 +39,52 @@ export default function Register() {
 
   return (
     <div className="login-container">
-      <h1>Gym Tracker</h1>
-      <h2>Crear Cuenta</h2>
+      <div className="login-card">
 
-      <form onSubmit={handleRegister}>
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        <div className="login-header">
+          <div className="logo-circle">
+            💪
+          </div>
 
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          minLength={6}
-        />
+          <h1>Gym Tracker</h1>
+          <p>Crea tu cuenta</p>
+        </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Creando cuenta..." : "Registrarse"}
-        </button>
-      </form>
+       <form onSubmit={handleRegister}>
+  <input
+    type="email"
+    placeholder="Correo electrónico"
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    required
+  />
+
+  <input
+    type="password"
+    placeholder="Contraseña"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    required
+    minLength={6}
+  />
+
+  <button
+  type="submit"
+  disabled={loading}
+  className="login-button"
+>
+  {loading ? "Creando cuenta..." : "Registrarse"}
+</button>
+</form>
+
+<p className="auth-link">
+  ¿Ya tienes cuenta?{" "}
+  <span onClick={() => navigate("/login")}>
+    Iniciar sesión
+  </span>
+</p>
+
+      </div>
     </div>
   );
 }

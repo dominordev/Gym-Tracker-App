@@ -3,44 +3,53 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
-
+import ProtectedRoute from "../routes/ProtectedRoute";
 
 export default function AppRouter({ session }) {
+  return (
+    <Routes>
 
-    return (
+      {/* Login */}
+      <Route
+        path="/login"
+        element={
+          session
+            ? <Navigate to="/dashboard" replace />
+            : <Login />
+        }
+      />
 
-        <Routes>
+      {/* Register */}
+      <Route
+        path="/register"
+        element={
+          session
+            ? <Navigate to="/dashboard" replace />
+            : <Register />
+        }
+      />
 
-            <Route
-                path="/login"
-                element={<Login />}
-            />
+      {/* Dashboard protegido */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute session={session}>
+            <Dashboard session={session} />
+          </ProtectedRoute>
+        }
+      />
 
+      {/* Ruta por defecto */}
+      <Route
+        path="*"
+        element={
+          <Navigate
+            to={session ? "/dashboard" : "/login"}
+            replace
+          />
+        }
+      />
 
-            <Route
-                path="/register"
-                element={<Register />}
-            />
-
-
-            <Route
-                path="/dashboard"
-                element={
-                    <Dashboard session={session}/>
-                }
-            />
-
-
-            <Route
-                path="*"
-                element={
-                    <Navigate to="/login" />
-                }
-            />
-
-
-        </Routes>
-
-    );
-
+    </Routes>
+  );
 }
