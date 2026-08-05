@@ -2,7 +2,7 @@ import { useWorkouts } from "../hooks/useWorkouts";
 
 import WorkoutForm from "../components/WorkoutForm";
 import WorkoutList from "../components/WorkoutList";
-
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../utils/supabase";
 
 
@@ -16,11 +16,18 @@ export default function Dashboard({ session }) {
     } = useWorkouts(session);
 
 
-    async function logout() {
+    const navigate = useNavigate();
 
-        await supabase.auth.signOut();
+async function handleLogout() {
+    const { error } = await supabase.auth.signOut();
 
+    if (error) {
+        console.error("Error cerrando sesión:", error.message);
+        return;
     }
+
+    navigate("/login");
+}
 
 
     return (
@@ -72,7 +79,7 @@ export default function Dashboard({ session }) {
 
 
                     <button
-                        onClick={logout}
+                        onClick={handleLogout}
                         className="
                             bg-zinc-800
                             hover:bg-zinc-700
