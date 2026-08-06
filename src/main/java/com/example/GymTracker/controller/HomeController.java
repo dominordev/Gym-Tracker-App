@@ -8,6 +8,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "Gym Tracker API funcionando";
+        return "Gym Tracker API is running";
     }
 }
